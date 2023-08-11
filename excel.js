@@ -1,19 +1,43 @@
-//Take incentive rate from excel and save localstorage
+//20230811 Take incentive rate from googlesheet and save localstorage
 (async() => {
-  const url = "INCENTIVE RATE.xlsx";
-  const data = await (await fetch(url)).arrayBuffer();
-  /* data is an ArrayBuffer */
-  const rate_wb = XLSX.read(data);
-  rate_raw = XLSX.utils.sheet_to_json(rate_wb.Sheets['Sheet1']);
-  
+const sheetId = '13_GqwbNdG5PVcmH5y4kCEsXUbxSbBGdBAPXffCSTJYg';
+const sheetName = 'Sheet1'; // Replace with the actual sheet name
+
+const apiKey = 'AIzaSyDrIwGXqGVBORgrRXMEkZhTK2DZS6Ojm_8'; // Replace with your Google API key
+
+const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}?key=${apiKey}`;
+
+const response = await fetch(url);
+const json = await response.json();
+
+const rate_raw = json.values;
+// console.log(rate_raw);
   rate_raw.map(row =>{ 
-    // console.log(typeof row.RM);
-    // row.RM = (row.RM==0?"-":row.RM)  //20220611 use back 0 dont want -
-    localStorage.setItem(row.Type, row.RM); //save record to localstorage, for later use
+    localStorage.setItem(row[0], row[1]); //save record to localstorage, for later use
     
-  // console.log(row.Type+"=="+row.RM);
+  // console.log(row[0]+"=="+row[1]);
+
   });
+
 })();
+
+//20230811 change to use google sheet
+// //Take incentive rate from excel and save localstorage
+// (async() => {
+//   const url = "INCENTIVE RATE.xlsx";
+//   const data = await (await fetch(url)).arrayBuffer();
+//   /* data is an ArrayBuffer */
+//   const rate_wb = XLSX.read(data);
+//   rate_raw = XLSX.utils.sheet_to_json(rate_wb.Sheets['Sheet1']);
+  
+//   rate_raw.map(row =>{ 
+//     // console.log(typeof row.RM);
+//     // row.RM = (row.RM==0?"-":row.RM)  //20220611 use back 0 dont want -
+//     localStorage.setItem(row.Type, row.RM); //save record to localstorage, for later use
+    
+//   // console.log(row.Type+"=="+row.RM);
+//   });
+// })();
 
 //1. Incentive report
 $('#input-excel').change(function (e) {
